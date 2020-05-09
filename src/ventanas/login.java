@@ -83,8 +83,7 @@ public class login extends JFrame {
 					
 					try {
 						Connection cn = Conexion.conectar();
-						PreparedStatement pst = cn.prepareStatement(
-								"select tipo_nivel, estatus from usuarios where username = '" +user
+						PreparedStatement pst = cn.prepareStatement("select tipo_nivel, estatus from usuarios where username = '" +user
 										+ "' and password = '" +pass +"'"); //seleccione tipo nivel y estatus haciendo comparacion de user y pass
 						
 						ResultSet rs = pst.executeQuery();
@@ -159,7 +158,7 @@ public class login extends JFrame {
 		Icon icono = new ImageIcon(wallpaper.getImage().getScaledInstance(jLabel_Wallpaper.getWidth(),
 				jLabel_Wallpaper.getHeight(), Image.SCALE_DEFAULT));
 		jLabel_Wallpaper.setIcon(icono);
-
+		this.repaint();
 	}
 	
 	@Override
