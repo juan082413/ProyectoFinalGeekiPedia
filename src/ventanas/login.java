@@ -10,14 +10,27 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import java.awt.Color;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.SwingConstants;
+import java.awt.Toolkit;
+import javax.swing.JButton;
+import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.sql.*;
+import clases.Conexion;
+
 
 public class login extends JFrame {
 
+	public static String user = "";
+	String pass = "";
+	
+	
 	private JPanel contentPane;
 	private JLabel jLabel_Wallpaper;
 	private JTextField txt_user;
@@ -43,6 +56,7 @@ public class login extends JFrame {
 	 * Create the frame.
 	 */
 	public login() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(login.class.getResource("/images/icon.png")));
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 400, 550);
@@ -53,6 +67,65 @@ public class login extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		
+		JLabel jLabel_Footer = new JLabel("Creado por GoaHead");
+		jLabel_Footer.setFont(new Font("Century Gothic", Font.BOLD, 15));
+		jLabel_Footer.setBounds(110, 496, 188, 14);
+		contentPane.add(jLabel_Footer);
+		
+		JButton jButton_Acceder = new JButton("Acceder");
+		jButton_Acceder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				user = txt_user.getText().trim();
+				pass = txt_password.getText().trim();
+				
+				if (!user.equals("") || !pass.equals("")) { //si no hay espacios en blanco que ejecute el código
+					
+					try {
+						Connection cn = Conexion.conectar();
+						PreparedStatement pst = cn.prepareStatement(
+								"select tipo_nivel, estatus from usuarios where username = '" +user
+										+ "' and password = '" +pass +"'"); //seleccione tipo nivel y estatus haciendo comparacion de user y pass
+						
+						ResultSet rs = pst.executeQuery();
+						if (rs.next()) {
+							String tipo_nivel = rs.getString("tipo_nivel");
+							String estatus = rs.getString("estatus");
+							
+							if(tipo_nivel.equalsIgnoreCase("Administrador") && estatus.equalsIgnoreCase("Activo")) {
+								dispose();
+								new Administrador().setVisible(true);
+								}else { if(tipo_nivel.equalsIgnoreCase("Capturista") && estatus.equalsIgnoreCase("Activo")) {
+										dispose();
+										new Capturista().setVisible(true);
+											}else { if(tipo_nivel.equalsIgnoreCase("Tecnico") && estatus.equalsIgnoreCase("Activo")) {
+													dispose();
+													new Tecnico().setVisible(true);
+														}else {
+													}
+													}
+													}
+						}else {
+							JOptionPane.showMessageDialog(null, "Datos de acceso incorrectos");
+							txt_user.setText("");
+							txt_password.setText("");
+						}
+						
+						
+					}catch (Exception ex) {
+						System.err.println("Error en el botón Acceder" +ex);//envío letreros en color rojo
+						JOptionPane.showMessageDialog(null, "Error al iniciar sesión contacte al administrador");
+					}
+					
+				} else {
+				JOptionPane.showMessageDialog(null, "Debes llenar todos los campos");
+				}
+			}
+			});
+		jButton_Acceder.setBackground(new Color(153, 102, 255));
+		jButton_Acceder.setForeground(Color.WHITE);
+		jButton_Acceder.setBounds(95, 420, 210, 35);
+		contentPane.add(jButton_Acceder);
 		
 		txt_user = new JTextField();
 		txt_user.setBackground(new Color(153, 102, 204));
@@ -86,13 +159,13 @@ public class login extends JFrame {
 		Icon icono = new ImageIcon(wallpaper.getImage().getScaledInstance(jLabel_Wallpaper.getWidth(),
 				jLabel_Wallpaper.getHeight(), Image.SCALE_DEFAULT));
 		jLabel_Wallpaper.setIcon(icono);
-		
-		
-		
-		
-		
-		
-		
+
+	}
+	
+	@Override
+	public Image getIconImage() {
+		Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("images/icon.png"));
+		return retValue;
 	}
 	}
 
