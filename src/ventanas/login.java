@@ -112,7 +112,7 @@ public class login extends JFrame {
 						
 						
 					}catch (Exception ex) {
-						System.err.println("Error en el botón Acceder" +ex);//envío letreros en color rojo
+						System.err.println("Error en el botón Acceder" + ex);//envío letreros en color rojo
 						JOptionPane.showMessageDialog(null, "Error al iniciar sesión contacte al administrador");
 					}
 					

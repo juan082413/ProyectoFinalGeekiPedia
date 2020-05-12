@@ -22,6 +22,8 @@ import java.awt.Toolkit;
 
 import clases.Conexion;
 import javax.swing.JTextField;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 
@@ -53,10 +55,10 @@ public class Administrador extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Administrador.class.getResource("/images/DS.png")));
 		user = login.user; // en user ya está capturado el usuario escrito en el panel login
 		sesion_usuario = 1; // Variable con función bandera que usaremos en interfaces capturista y tecnico
-		setSize(350,430);
+		setSize(650,430);
 		setResizable(false);
 		setTitle("Administrador - Sesión de " +user);
-		setLocationRelativeTo(null);
+		setLocationRelativeTo(null); //pone las ventanas en la mitad, se debe borrar los valores por defecto creados por el JFrame en el constructor
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); //Evitar que el programa se siga ejecutando en segundo plano a pesar de haberse cerrado la interfaz
 
 		
@@ -68,7 +70,7 @@ public class Administrador extends JFrame {
 			
 			if(rs.next()) {
 				nombre_usuario = rs.getString("usuario");
-				JOptionPane.showMessageDialog(null, "Bienvenido " +nombre_usuario);
+				JOptionPane.showMessageDialog(null, "Welcome " +nombre_usuario);
 				
 				}
 			
@@ -77,9 +79,7 @@ public class Administrador extends JFrame {
 		
 		}
 		
-		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-		setBounds(100, 100, 650, 430);
+
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -87,11 +87,23 @@ public class Administrador extends JFrame {
 		
 		
 		JButton jButton_Registrar_Usuario = new JButton("");
+		jButton_Registrar_Usuario.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				 RegistrarUsuarios registrarUsuarios = new RegistrarUsuarios();
+				 registrarUsuarios.setVisible(true);
+			}
+		});
 		jButton_Registrar_Usuario.setIcon(new ImageIcon(Administrador.class.getResource("/images/addUser.png")));
 		jButton_Registrar_Usuario.setBounds(40, 70, 120, 100);
 		contentPane.add(jButton_Registrar_Usuario);
 		
 		JButton jButton_GestionarUsuarios = new JButton("");
+		jButton_GestionarUsuarios.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GestionarUsuarios gestionarUsuarios = new GestionarUsuarios();
+				 gestionarUsuarios.setVisible(true);
+			}
+		});
 		jButton_GestionarUsuarios.setIcon(new ImageIcon(Administrador.class.getResource("/images/informationuser.png")));
 		jButton_GestionarUsuarios.setBounds(270, 70, 120, 100);
 		contentPane.add(jButton_GestionarUsuarios);
@@ -116,7 +128,7 @@ public class Administrador extends JFrame {
 		jButton_AcercaDe.setBounds(500, 240, 120, 100);
 		contentPane.add(jButton_AcercaDe);
 		
-		JLabel txt_Registrar_Usuarios = new JLabel("Regustrar Usuario");
+		JLabel txt_Registrar_Usuarios = new JLabel("Registrar Usuario");
 		txt_Registrar_Usuarios.setForeground(Color.WHITE);
 		txt_Registrar_Usuarios.setBounds(50, 170, 110, 14);
 		contentPane.add(txt_Registrar_Usuarios);
