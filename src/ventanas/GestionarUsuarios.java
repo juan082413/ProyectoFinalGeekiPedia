@@ -136,7 +136,7 @@ public class GestionarUsuarios extends JFrame {
 					user_update = (String)model.getValueAt(fila_point, columna_point);
 					InformacionUsuario informacionusuario = new InformacionUsuario();
 					informacionusuario.setVisible(true);
-				
+	
 				}
 				
 				

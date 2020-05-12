@@ -1,0 +1,23 @@
+[33mcommit a8fc03d65ed26a3b195848dbb1d01937393c6809[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: Juan Pablo Gomez Hernandez <juangomez0824@gmail.com>
+Date:   Mon May 11 20:42:26 2020 -0500
+
+    se añade el panel con tabla info usuarios
+
+[33mcommit 6adfecd0e5ccaac6b1bd3554c18f8493cdb14f40[m
+Author: Juan Pablo Gomez Hernandez <juangomez0824@gmail.com>
+Date:   Sat May 9 15:52:15 2020 -0500
+
+    se modifica panel administrador y se empueza panel registro usuarios
+
+[33mcommit d3c7cd84a7e25fc2c375671520950b30e1c5ab83[m
+Author: Juan Pablo Gomez Hernandez <juangomez0824@gmail.com>
+Date:   Sat May 9 12:56:21 2020 -0500
+
+    se termina el panel login y se empieza panel admon
+
+[33mcommit 2bac2e97a7aacc7544f965364bcc82d6dbef20bd[m
+Author: Juan Pablo Gomez Hernandez <juangomez0824@gmail.com>
+Date:   Fri May 8 17:21:58 2020 -0500
+
+    se crea el proyecto empresa de computadores, panel login

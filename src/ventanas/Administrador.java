@@ -60,25 +60,7 @@ public class Administrador extends JFrame {
 		setTitle("Administrador - Sesión de " +user);
 		setLocationRelativeTo(null); //pone las ventanas en la mitad, se debe borrar los valores por defecto creados por el JFrame en el constructor
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); //Evitar que el programa se siga ejecutando en segundo plano a pesar de haberse cerrado la interfaz
-
-		
-		try {
-			Connection cn = Conexion.conectar();
-			PreparedStatement pst = cn.prepareStatement("select usuario from usuarios where username = '" + user +"'"); 
-			
-			ResultSet rs = pst.executeQuery();
-			
-			if(rs.next()) {
-				nombre_usuario = rs.getString("usuario");
-				JOptionPane.showMessageDialog(null, "Welcome " +nombre_usuario);
-				
-				}
-			
-		}catch (Exception ex){
-			System.err.println("Error en conexion desde la interfaz administrador");
-		
-		}
-		
+	
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -158,6 +140,12 @@ public class Administrador extends JFrame {
 		lblAcercaDe.setBounds(510, 340, 110, 14);
 		contentPane.add(lblAcercaDe);
 		
+		JLabel lblNombre = new JLabel("User");
+		lblNombre.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 15));
+		lblAcercaDe.setForeground(Color.WHITE);
+		lblNombre.setBounds(24, 36, 610, 26);
+		contentPane.add(lblNombre);
+		
 		JLabel lblNewLabel = new JLabel("Creado por GoaHead");
 		lblNewLabel.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 15));
 		lblNewLabel.setBounds(248, 365, 216, 26);
@@ -171,6 +159,24 @@ public class Administrador extends JFrame {
 				jLabel_Wallpaper.getHeight(), Image.SCALE_DEFAULT));
 		jLabel_Wallpaper.setIcon(icono);
 
+		try {
+			Connection cn = Conexion.conectar();
+			PreparedStatement pst = cn.prepareStatement("select usuario from usuarios where username = '" + user +"'"); 
+			
+			ResultSet rs = pst.executeQuery();
+			
+			if(rs.next()) {
+				nombre_usuario = rs.getString("usuario");
+				lblNombre.setText(nombre_usuario);
+				
+				}
+			
+		}catch (Exception ex){
+			System.err.println("Error en conexion desde la interfaz administrador");
+		
+		}
+
+		
 	}
 	
 	@Override
