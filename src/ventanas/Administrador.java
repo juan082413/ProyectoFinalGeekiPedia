@@ -31,7 +31,7 @@ public class Administrador extends JFrame {
 
 	private JPanel contentPane;
 	String user, nombre_usuario;
-	public static int sesion_usuario;				// variable para enviar datos entre interfaces
+	public static int sesion_usuario;	// variable para enviar datos entre interfaces
 	/**
 	 * Launch the application.
 	 */
@@ -96,6 +96,13 @@ public class Administrador extends JFrame {
 		contentPane.add(jButton_Creatividad);
 		
 		JButton jButton_Capturista = new JButton("");
+		jButton_Capturista.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				
+			}
+		});
 		jButton_Capturista.setIcon(new ImageIcon(Administrador.class.getResource("/images/capturista.png")));
 		jButton_Capturista.setBounds(40, 240, 120, 100);
 		contentPane.add(jButton_Capturista);
