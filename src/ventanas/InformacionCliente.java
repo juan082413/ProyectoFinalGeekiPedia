@@ -12,6 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.Color;
 import javax.swing.JTextField;
@@ -22,11 +24,17 @@ import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import java.sql.*;
+
+import clases.Conexion;
+
 import com.itextpdf.text.Chunk;
 
 import com.itextpdf.text.Paragraph;
@@ -37,6 +45,7 @@ import com.itextpdf.text.FontFactory;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JScrollPane;
 
 
 public class InformacionCliente extends JFrame {
@@ -52,6 +61,7 @@ public class InformacionCliente extends JFrame {
 	int IDCliente_update =0;
 	public static int IDequipo=0;
 	String user ="";
+	private JTable table;
 	
 
 	/**
@@ -89,10 +99,6 @@ public class InformacionCliente extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
-		jTable_equipos = new JTable();
-		jTable_equipos.setBounds(608, 95, -325, 96);
-		contentPane.add(jTable_equipos);
 		
 		JLabel lbl_titulo = new JLabel("Informaci\u00F3n del cliente:");
 		lbl_titulo.setForeground(Color.WHITE);
@@ -163,7 +169,7 @@ public class InformacionCliente extends JFrame {
 		contentPane.add(registradopor);
 		
 		txt_registradopor = new JTextField();
-		txt_registradopor.setForeground(Color.WHITE);
+		txt_registradopor.setForeground(Color.BLACK);
 		txt_registradopor.setColumns(10);
 		txt_registradopor.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		txt_registradopor.setBackground(Color.WHITE);
@@ -173,6 +179,9 @@ public class InformacionCliente extends JFrame {
 		JButton btn_RegistrarEquipo = new JButton("RegistrarEquipo");
 		btn_RegistrarEquipo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				RegistrarEquipo registarequipo = new RegistrarEquipo();
+				registarequipo .setVisible(true);
+				
 			}
 		});
 		btn_RegistrarEquipo.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -182,6 +191,67 @@ public class InformacionCliente extends JFrame {
 		JButton btn_ActualizarCliente = new JButton("Actualizar Cliente");
 		btn_ActualizarCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int validacion=0; //variable bandera
+				String nombre, email, telefono, direccion;
+				nombre = txt_nombre.getText().trim();
+				email=txt_email.getText().trim();
+				telefono=txt_telefono.getText().trim();
+				direccion=txt_direccion.getText().trim();
+				
+				if (nombre.equals("")) {
+					txt_nombre.setBackground(Color.red);
+					validacion++;
+				}
+				if (email.equals("")) {
+					txt_email.setBackground(Color.red);
+					validacion++;
+				}
+				if (telefono.equals("")) {
+					txt_telefono.setBackground(Color.red);
+					validacion++;
+				}
+				if (direccion.equals("")) {
+					txt_direccion.setBackground(Color.red);
+					validacion++;
+				}
+				
+				
+				if(validacion==0) {
+					try {
+						Connection cn = Conexion.conectar();
+						PreparedStatement pst = cn.prepareStatement(
+								"update clientes set nombre_cliente=?, mail_cliente=?, tel_cliente=?, dir_cliente=?, ultima_modificacion=?"
+								+ "where id_cliente = '" +IDCliente_update + "'");
+						pst.setString(1, nombre);
+						pst.setString(2, email);
+						pst.setString(3, telefono);
+						pst.setString(4, direccion);
+						pst.setString(5, user);
+						
+						pst.executeUpdate();
+						cn.close();
+						Limpiar();
+						
+						txt_nombre.setBackground(Color.green);
+						txt_email.setBackground(Color.green);
+						txt_direccion.setBackground(Color.green);
+						txt_registradopor.setText(user);
+						
+						JOptionPane.showMessageDialog(null, "Actualizacion exitosa");
+						dispose();
+						
+					}catch(SQLException ex) {
+						System.err.println("Error al sincronizar con BD" +ex);
+						JOptionPane.showMessageDialog(null, "Error al comunicarse con BD comuniquese admon");
+					}
+										
+				}else {
+					JOptionPane.showMessageDialog(null, "Hay campos vacíos");
+				}
+					
+				
+				
+				
 			}
 		});
 		btn_ActualizarCliente.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -194,22 +264,99 @@ public class InformacionCliente extends JFrame {
 		contentPane.add(jButton_Creatividad);
 		
 		JLabel lblNewLabel_1 = new JLabel("Creado por GoaHead");
-		lblNewLabel_1.setBounds(278, 419, 127, 14);
+		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblNewLabel_1.setBounds(278, 419, 196, 22);
 		contentPane.add(lblNewLabel_1);
 		
-		JLabel jLabel_Wallpaper = new JLabel("New label");
-		jLabel_Wallpaper.setBounds(0, 0, 666, 458);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(270, 58, 367, 179);
+		contentPane.add(scrollPane);
+		
+		
+		
+		JLabel jLabel_Wallpaper = new JLabel("");
+		jLabel_Wallpaper.setBounds(0, 0, 666, 464);
 		contentPane.add(jLabel_Wallpaper);
 		Icon icono = new ImageIcon(wallpaper.getImage().getScaledInstance(jLabel_Wallpaper.getWidth(),
 				jLabel_Wallpaper.getHeight(), Image.SCALE_DEFAULT));
 		jLabel_Wallpaper.setIcon(icono);
 		this.repaint();
 		
+		try { //conexion a BD tabla clientes para llenado de campos del usuario
+			Connection cn = Conexion.conectar();
+			PreparedStatement pst = cn.prepareStatement(
+					"select * from clientes where id_cliente = '" + IDCliente_update + "'");
+			ResultSet rs = pst.executeQuery(); //buscar
+			
+			
+			
+			if(rs.next()) {
+				setTitle("Información del cliente" +rs.getString("nombre_cliente") + " -Sesión de: " +user);
+				lbl_titulo.setText("Información del cliente " +rs.getString("nombre_cliente"));
+				txt_nombre.setText(rs.getString("nombre_cliente"));
+				txt_email.setText(rs.getString("mail_cliente"));
+				txt_telefono.setText(rs.getString("tel_cliente"));
+				txt_direccion.setText(rs.getString("dir_cliente"));
+				txt_registradopor.setText(rs.getString("ultima_modificacion"));
+				
+			}
+			cn.close();
+		}catch(SQLException ex) {
+			System.err.println("Error base datos" +ex);
+			JOptionPane.showMessageDialog(null, "Error al conectar BD consultar admon");
+		}
 		
 		
+		try { //conexcion a BD tabla equipos para llenado de los equipos de cada cliente usando el ID com identificador
+			Connection cn = Conexion.conectar();
+			PreparedStatement pst = cn.prepareStatement(
+					"select id_equipo, tipo_equipo, marca, estatus from equipos where id_cliente = '" +IDCliente_update +"'");
+			
+			ResultSet rs = pst.executeQuery();
+			
+			jTable_equipos = new JTable(model);  //esto tambien puede estar afuera del trycatch contal de qye esté en el constructior
+			scrollPane.setViewportView(jTable_equipos);
+			
+			model.addColumn("ID Equipo");
+			model.addColumn("Tipo de Equipo");
+			model.addColumn("Marca");
+			model.addColumn("Estatus");
+				
+			while(rs.next()) {
+				Object [] fila = new Object [4];
+				for (int f=0;f<4;f++) {
+					fila[f] = rs.getObject(f+1);
+					}
+				model.addRow(fila);
+					}
+			cn.close();
+		}catch (SQLException ex) {
+			System.err.println("Error en el llenado de la tabla equipos" +ex);
+
+		}
 		
+		jTable_equipos.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int fila_point = jTable_equipos.rowAtPoint(e.getPoint()); 
+				int columna_point = 0;
+				
+				if (fila_point > -1) { //partiendo desde cero
+					IDequipo = (int)model.getValueAt(fila_point, columna_point); //casting
+					InformacionCliente informacion_cliente = new InformacionCliente();
+					informacion_cliente.setVisible(true);
+				}
+			}
+		});
 		
 		
 	}
 
+	public void Limpiar() {
+		txt_nombre.setText("");
+		txt_email.setText("");
+		txt_direccion.setText("");
+		txt_telefono.setText("");	
+	}
+	
 }

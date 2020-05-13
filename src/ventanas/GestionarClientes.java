@@ -134,12 +134,12 @@ public class GestionarClientes extends JFrame {
 				
 				if (fila_point > -1) { //partiendo desde cero
 					IDCliente_update = (int)model.getValueAt(fila_point, columna_point); //casting
-					JOptionPane.showMessageDialog(null, "el id es: " +IDCliente_update);
+					InformacionCliente informacion_cliente = new InformacionCliente();
+					informacion_cliente.setVisible(true);
+					
 	
 				}
-				
-				
-			
+
 			}
 			});
 			
