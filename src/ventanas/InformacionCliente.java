@@ -26,6 +26,7 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileOutputStream;
 import java.awt.event.ActionEvent;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -259,6 +260,104 @@ public class InformacionCliente extends JFrame {
 		contentPane.add(btn_ActualizarCliente);
 		
 		JButton jButton_Creatividad = new JButton("");
+		jButton_Creatividad.addActionListener(new ActionListener() { //IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS 
+			public void actionPerformed(ActionEvent e) {
+				Document documento = new Document();
+				try {
+					String ruta=System.getProperty("user.home");
+					PdfWriter.getInstance(documento, new FileOutputStream(ruta + "/Desktop/" + txt_nombre.getText().trim() + ".pdf")); //asignamos ruta, nombre y extension
+					
+					com.itextpdf.text.Image header = com.itextpdf.text.Image.getInstance("D:\\eclipse\\DataSystem\\src\\images\\BannerPDF.jpg"); //si tengo dos bibliotecas con el mismo nombre //header es un método
+					header.scaleToFit(650,1000);
+					header.setAlignment(Chunk.ALIGN_CENTER);
+					
+					Paragraph parrafo = new Paragraph ();
+					parrafo.setAlignment(Paragraph.ALIGN_CENTER);
+					parrafo.add("Información del cliente");
+					parrafo.setFont(FontFactory.getFont("Tahoma", 14, Font.BOLD, BaseColor.DARK_GRAY));
+					
+					documento.open();
+					documento.add(header);
+					documento.add(parrafo);
+					
+					PdfPTable tablacliente = new PdfPTable(5); //IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS 
+					tablacliente.addCell("ID");
+					tablacliente.addCell("Nombre");
+					tablacliente.addCell("email");
+					tablacliente.addCell("Telefono");
+					tablacliente.addCell("Direccion");
+					
+					
+					try {			//IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS 
+						Connection cn = Conexion.conectar();
+								PreparedStatement pst = cn.prepareStatement(
+										"select * from clientes where id_cliente = '" + IDCliente_update +"'");
+						ResultSet rs = pst.executeQuery();
+						
+						if(rs.next()) {
+							do {
+								
+								tablacliente.addCell(rs.getString(1));
+								tablacliente.addCell(rs.getString(2));
+								tablacliente.addCell(rs.getString(3));
+								tablacliente.addCell(rs.getString(4));
+								tablacliente.addCell(rs.getString(5));
+								
+							}while(rs.next());
+								documento.add(tablacliente); //ya que hicimos la tabla se la agregamos al documento
+						}	
+						Paragraph parrafo2 = new Paragraph();
+						parrafo2.setAlignment(Paragraph.ALIGN_CENTER);
+						parrafo2.add("\n \n Equipos registrados. \n \n ");
+						parrafo2.setFont(FontFactory.getFont("Tahoma", 14, Font.BOLD, BaseColor.DARK_GRAY));
+						
+						documento.add(parrafo2);
+						
+						PdfPTable tablaEquipos = new PdfPTable(4);
+						tablaEquipos.addCell("ID equipo");
+						tablaEquipos.addCell("Tipo");
+						tablaEquipos.addCell("Marca");
+						tablaEquipos.addCell("Estatus");
+						
+						try {		//IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS IMPRIMIR DATOS 
+							Connection cn2 = Conexion.conectar();
+							PreparedStatement pst2 = cn2.prepareStatement(
+									"select id_equipo, tipo_equipo, marca, estatus from equipos where id_cliente = '" +IDCliente_update+ "'");
+							ResultSet rs2 = pst2.executeQuery();
+							
+							if(rs2.next()) {
+								do {
+									tablaEquipos.addCell(rs2.getString(1));
+									tablaEquipos.addCell(rs2.getString(2));
+									tablaEquipos.addCell(rs2.getString(3));
+									tablaEquipos.addCell(rs2.getString(4));
+									
+									
+								}while(rs2.next());
+								documento.add(tablaEquipos);
+							}
+							
+							
+						}catch (SQLException ex) {
+							System.err.println("Error al cargar equipos" +ex);
+						}
+						
+						
+
+					}catch (SQLException ex) {
+						System.err.println("Error al obtener datos del cliente. "+ex);
+					}
+					documento.close();
+					JOptionPane.showMessageDialog(null, "Reporte creado Correctamente");
+					
+				} catch (Exception ex) {
+					System.err.println("Error al generar el PDF o ruta imagen. "+ ex);
+					JOptionPane.showMessageDialog(null, "Error al generar el PDF contacte admon");
+				}
+				
+				
+			}
+		});
 		jButton_Creatividad.setIcon(new ImageIcon(InformacionCliente.class.getResource("/images/impresora.png")));
 		jButton_Creatividad.setBounds(517, 267, 120, 100);
 		contentPane.add(jButton_Creatividad);
@@ -282,7 +381,7 @@ public class InformacionCliente extends JFrame {
 		jLabel_Wallpaper.setIcon(icono);
 		this.repaint();
 		
-		try { //conexion a BD tabla clientes para llenado de campos del usuario
+		try { //CONEXION A BD PARA LLENADO DE LA INFORMACION DEL USUARIO SELECCIONADO POR IDCLIENTEUPDATE
 			Connection cn = Conexion.conectar();
 			PreparedStatement pst = cn.prepareStatement(
 					"select * from clientes where id_cliente = '" + IDCliente_update + "'");
@@ -290,8 +389,8 @@ public class InformacionCliente extends JFrame {
 			
 			
 			
-			if(rs.next()) {
-				setTitle("Información del cliente" +rs.getString("nombre_cliente") + " -Sesión de: " +user);
+			if(rs.next()) {	//CONEXION A BD PARA LLENADO DE LA INFORMACION DEL USUARIO SELECCIONADO POR IDCLIENTEUPDATE
+				setTitle("Información del cliente: " +rs.getString("nombre_cliente") + " -Sesión de: " +user);
 				lbl_titulo.setText("Información del cliente " +rs.getString("nombre_cliente"));
 				txt_nombre.setText(rs.getString("nombre_cliente"));
 				txt_email.setText(rs.getString("mail_cliente"));
@@ -306,8 +405,8 @@ public class InformacionCliente extends JFrame {
 			JOptionPane.showMessageDialog(null, "Error al conectar BD consultar admon");
 		}
 		
-		
-		try { //conexcion a BD tabla equipos para llenado de los equipos de cada cliente usando el ID com identificador
+				
+		try { //CONEXION A BD TABLA EQUIPOS PARA LLENADO DE LOS EQUIPOS DE CADA CLIENTE EN LA TABLA EQUIPOS DEL PANEL INFO USUARIOS
 			Connection cn = Conexion.conectar();
 			PreparedStatement pst = cn.prepareStatement(
 					"select id_equipo, tipo_equipo, marca, estatus from equipos where id_cliente = '" +IDCliente_update +"'");
@@ -322,7 +421,7 @@ public class InformacionCliente extends JFrame {
 			model.addColumn("Marca");
 			model.addColumn("Estatus");
 				
-			while(rs.next()) {
+			while(rs.next()) {	//CONEXION A BD TABLA EQUIPOS PARA LLENADO DE LOS EQUIPOS DE CADA CLIENTE EN LA TABLA EQUIPOS DEL PANEL INFO USUARIOS
 				Object [] fila = new Object [4];
 				for (int f=0;f<4;f++) {
 					fila[f] = rs.getObject(f+1);
@@ -343,8 +442,8 @@ public class InformacionCliente extends JFrame {
 				
 				if (fila_point > -1) { //partiendo desde cero
 					IDequipo = (int)model.getValueAt(fila_point, columna_point); //casting
-					InformacionCliente informacion_cliente = new InformacionCliente();
-					informacion_cliente.setVisible(true);
+					InformacionEquipos informacionequipos = new InformacionEquipos();
+					informacionequipos.setVisible(true);
 				}
 			}
 		});
