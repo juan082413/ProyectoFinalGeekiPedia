@@ -98,7 +98,8 @@ public class Administrador extends JFrame {
 		JButton jButton_Capturista = new JButton("");
 		jButton_Capturista.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				Capturista capturista = new Capturista();
+				capturista.setVisible(true);
 				
 				
 			}

@@ -121,7 +121,7 @@ public class Capturista extends JFrame {
 		jButton_RegistrarCliente.setBounds(26, 79, 120, 100);
 		contentPane.add(jButton_RegistrarCliente);
 		
-		JLabel txt_Registrar_Cliente = new JLabel("Registrar usuario");
+		JLabel txt_Registrar_Cliente = new JLabel("Registrar cliente");
 		txt_Registrar_Cliente.setForeground(Color.WHITE);
 		txt_Registrar_Cliente.setBounds(26, 190, 110, 14);
 		contentPane.add(txt_Registrar_Cliente);

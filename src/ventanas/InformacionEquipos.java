@@ -26,6 +26,8 @@ import javax.swing.JTextArea;
 import javax.swing.DefaultComboBoxModel;
 import java.sql.*;
 import clases.Conexion;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 public class InformacionEquipos extends JFrame {
@@ -41,6 +43,9 @@ public class InformacionEquipos extends JFrame {
 	private JComboBox cmb_TipoEquipo;
 	private JTextArea textAreaCapturista;
 	private JTextArea textAreaTecnico;
+	private JTextField txt_fecha;
+	private JTextField txt_ultimaModificacinPor;
+	private JComboBox cmb_estatus;
 
 	/**
 	 * Launch the application.
@@ -138,32 +143,103 @@ public class InformacionEquipos extends JFrame {
 		txt_serie.setColumns(10);
 		txt_serie.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
 		txt_serie.setBackground(new Color(102, 102, 255));
-		txt_serie.setBounds(23, 343, 223, 20);
+		txt_serie.setBounds(23, 332, 223, 20);
 		contentPane.add(txt_serie);
 		
-		JButton btn_ActualizarEquipo = new JButton("Actualizar Cliente");
+		cmb_estatus = new JComboBox();
+		cmb_estatus.setModel(new DefaultComboBoxModel(new String[] {"Nuevo Ingreso", "Revisi\u00F3n", "Terminado"}));
+		cmb_estatus.setBorder(new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		cmb_estatus.setBounds(480, 41, 115, 22);
+		contentPane.add(cmb_estatus);
+		
+		
+		JButton btn_ActualizarEquipo = new JButton("Actualizar Equipo"); //ACTUALIZAR DATOS EQUIPO Y OBSERVACIONES
+		btn_ActualizarEquipo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int validacion = 0;
+				String tipo_equipo, marca, modelo, serie, estatus, observaciones;
+				
+				tipo_equipo = cmb_TipoEquipo.getSelectedItem().toString();
+				marca=cmb_Marca.getSelectedItem().toString();
+				estatus=cmb_estatus.getSelectedItem().toString();
+				
+				modelo=txt_modelo.getText().trim();
+				serie=txt_serie.getText().trim();
+				observaciones=textAreaCapturista.getText();
+				
+				if(modelo.equals("")) {
+					txt_modelo.setBackground(Color.red);
+				}
+				if(serie.equals("")) {
+					txt_serie.setBackground(Color.red);
+				}
+				if(observaciones.equals("")) {
+					textAreaCapturista.setText("Sin observaciones. ");
+				}
+				
+				if (validacion==0) {
+					try {//ACTUALIZAR DATOS EQUIPO Y OBSERVACIONES //CONEXION A BASE DE DATOS CON UPDATE
+						Connection cn3 = Conexion.conectar();
+						PreparedStatement pst3 = cn3.prepareStatement(
+								"update equipos set tipo_equipo=?, marca=?, modelo=?, num_serie=?, observaciones=?, estatus=?, ultima_modificacion=? "
+								+ "where id_equipo='" +IDequipo+"'");
+						
+						pst3.setString(1, tipo_equipo);
+						pst3.setString(2, marca);
+						pst3.setString(3, modelo);
+						pst3.setString(4, serie);
+						pst3.setString(5, observaciones);
+						pst3.setString(6, estatus);
+						pst3.setString(7, user);
+						
+						pst3.executeUpdate();
+						cn3.close();
+						
+						Limpiar();
+						
+						txt_nombre.setBackground(Color.green);
+						txt_fecha.setBackground(Color.green);
+						txt_modelo.setBackground(Color.green);
+						txt_serie.setBackground(Color.green);
+						txt_ultimaModificacinPor.setBackground(Color.green);
+					
+					
+						JOptionPane.showMessageDialog(null, "Actualización Exitosa");
+						dispose();
+						
+					}catch(SQLException ex){
+						System.err.print("Erro al cargar datos equipo " +ex);
+						JOptionPane.showMessageDialog(null, "Hay campos vacíos");
+					}
+				}else {
+					JOptionPane.showMessageDialog(null, "Hay campos vacíos");
+					
+				}
+				
+			}
+		});
 		btn_ActualizarEquipo.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		btn_ActualizarEquipo.setBounds(369, 352, 204, 23);
+		btn_ActualizarEquipo.setBounds(371, 363, 204, 23);
 		contentPane.add(btn_ActualizarEquipo);
 		
 		JLabel lblDaoReportadoY = new JLabel("Da\u00F1o reportado y observaciones:");
 		lblDaoReportadoY.setForeground(Color.WHITE);
 		lblDaoReportadoY.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblDaoReportadoY.setBounds(286, 38, 223, 22);
+		lblDaoReportadoY.setBounds(288, 68, 223, 22);
 		contentPane.add(lblDaoReportadoY);
 		
 		textAreaCapturista = new JTextArea();
-		textAreaCapturista.setBounds(286, 65, 307, 107);
+		textAreaCapturista.setBounds(288, 94, 307, 107);
 		contentPane.add(textAreaCapturista);
 		
 		textAreaTecnico = new JTextArea();
-		textAreaTecnico.setBounds(286, 215, 307, 107);
+		textAreaTecnico.setBounds(288, 245, 307, 107);
 		contentPane.add(textAreaTecnico);
 		
 		JLabel lblComentariosYActualizacin = new JLabel("Comentarios y actualizaci\u00F3n del t\u00E9cnico:");
 		lblComentariosYActualizacin.setForeground(Color.WHITE);
 		lblComentariosYActualizacin.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblComentariosYActualizacin.setBounds(286, 183, 290, 22);
+		lblComentariosYActualizacin.setBounds(285, 212, 290, 22);
 		contentPane.add(lblComentariosYActualizacin);
 		
 		JLabel lblMarca = new JLabel("Marca");
@@ -177,6 +253,29 @@ public class InformacionEquipos extends JFrame {
 		lblInformacinDelEquipo.setFont(new Font("Tahoma", Font.PLAIN, 22));
 		lblInformacinDelEquipo.setBounds(149, 0, 283, 27);
 		contentPane.add(lblInformacinDelEquipo);
+		
+		txt_fecha = new JTextField();
+		txt_fecha.setForeground(Color.WHITE);
+		txt_fecha.setColumns(10);
+		txt_fecha.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
+		txt_fecha.setBackground(new Color(102, 102, 255));
+		txt_fecha.setBounds(288, 42, 144, 20);
+		contentPane.add(txt_fecha);
+		
+		
+		txt_ultimaModificacinPor = new JTextField();
+		txt_ultimaModificacinPor.setForeground(Color.WHITE);
+		txt_ultimaModificacinPor.setColumns(10);
+		txt_ultimaModificacinPor.setBorder(new SoftBevelBorder(BevelBorder.RAISED, null, null, null, null));
+		txt_ultimaModificacinPor.setBackground(new Color(102, 102, 255));
+		txt_ultimaModificacinPor.setBounds(23, 385, 223, 20);
+		contentPane.add(txt_ultimaModificacinPor);
+		
+		JLabel lbl_ultimaModificacinPor = new JLabel("\u00DAltima modificaci\u00F3n por:");
+		lbl_ultimaModificacinPor.setForeground(Color.WHITE);
+		lbl_ultimaModificacinPor.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lbl_ultimaModificacinPor.setBounds(23, 363, 223, 22);
+		contentPane.add(lbl_ultimaModificacinPor);
 		JLabel jLabel_Wallpaper = new JLabel("New label");
 		jLabel_Wallpaper.setBounds(0, 0, 624, 416);
 		contentPane.add(jLabel_Wallpaper);
@@ -224,23 +323,33 @@ public class InformacionEquipos extends JFrame {
 				cmb_TipoEquipo.setSelectedItem(rs.getString("tipo_equipo"));
 				cmb_Marca.setSelectedItem(rs.getString("marca"));
 				textAreaCapturista.setText(rs.getString("observaciones"));
+				txt_ultimaModificacinPor.setText(rs.getString("ultima_modificacion"));
 				
+				String dia="", mes="", annio="";
+				dia=rs.getString("dia_ingreso");
+				mes=rs.getString("mes_ingreso");
+				annio=rs.getString("annio_ingreso");
+				txt_fecha.setText(dia +" "+ mes+" " + annio);
 				
 			}
 			cn.close();
 		}catch(SQLException ex) {
 			System.err.println("Error base datos tabla equipos" +ex);
 			JOptionPane.showMessageDialog(null, "Error al obtener datos del equipo consultar admon");
-		
-			
-			
-			
-			
+
 			
 		}
 	}
 	
-	
+	public void Limpiar(){
+		txt_nombre.setText("");
+		txt_fecha.setText("");
+		txt_modelo.setText("");
+		txt_serie.setText("");
+		textAreaCapturista.setText("");
+		
+		
+	}
 		
 	}
 		
